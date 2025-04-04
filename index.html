@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Dashboard Financeiro</title>
+        <link rel="stylesheet" href="styles.css">
+    </head>
+    
+    <body>
+        <div class="container">
+            <!-- Sidebar -->
+            <aside class="sidebar">
+                <div class="logo">FinControl</div>
+                
+                <div class="menu-item" onclick="window.location.href='index.html'">
+                    <i>📊</i> Dashboard
+                </div>
+                <div class="menu-item" onclick="window.location.href='transactions.html'">
+                    <i>💰</i> Transações
+                </div>                
+            </aside>
+            
+            <!-- Main Content -->
+            <main class="main-content">
+                <div class="header">
+                    <h1 class="page-title">Dashboard Financeiro</h1>
+                    <div class="header-actions">
+                        <button class="btn btn-outline" id="btnNovaTransacao">+ Nova Transação</button>
+                    </div>
+                </div>
+                
+                <!-- Modal para Nova Transação -->
+                <div id="transacaoModal" class="modal">
+                    <div class="modal-content">
+                        <span class="close-modal">&times;</span>
+                        <h2>Nova Transação</h2>
+                        <form id="transacaoForm">
+                            <div class="form-group">
+                                <label for="descricao">Descrição</label>
+                                <input type="text" id="descricao" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="categoria">Categoria</label>
+                                <select id="categoria" required>
+                                    <option value="receita">Receita</option>
+                                    <option value="receita-extra">Receita Extra</option>
+                                    <option value="alimentacao">Alimentação</option>
+                                    <option value="moradia">Moradia</option>
+                                    <option value="transporte">Transporte</option>
+                                    <option value="utilidades">Utilidades</option>
+                                    <option value="lazer">Lazer</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="data">Data</label>
+                                <input type="date" id="data" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="valor">Valor (R$)</label>
+                                <input type="number" id="valor" step="0.01" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="tipo">Tipo</label>
+                                <select id="tipo" required>
+                                    <option value="receita">Receita</option>
+                                    <option value="despesa">Despesa</option>
+                                </select>
+                            </div>
+                            
+                            <button type="submit" class="btn btn-primary">Adicionar Transação</button>
+                        </form>
+                    </div>
+                </div>
+                
+                <!-- Modal para Atualizar Categoria -->
+                <div id="categoriaModal" class="modal">
+                    <div class="modal-content">
+                        <span class="close-modal">&times;</span>
+                        <h2>Atualizar Categoria</h2>
+                        <form id="categoriaForm">
+                            <div class="form-group">
+                                <label for="categoriaNome">Categoria</label>
+                                <input type="text" id="categoriaNome" readonly>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="categoriaLimite">Limite Orçamento (R$)</label>
+                                <input type="number" id="categoriaLimite" step="0.01" required>
+                            </div>
+                            
+                            <button type="submit" class="btn btn-primary">Atualizar Limite</button>
+                        </form>
+                    </div>
+                </div>
+                
+                <!-- Modal para Nova Meta -->
+                <div id="metaModal" class="modal">
+                    <div class="modal-content">
+                        <span class="close-modal">&times;</span>
+                        <h2>Nova Meta Financeira</h2>
+                        <form id="metaForm">
+                            <div class="form-group">
+                                <label for="metaTitulo">Título</label>
+                                <input type="text" id="metaTitulo" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="metaValorTotal">Valor Total (R$)</label>
+                                <input type="number" id="metaValorTotal" step="0.01" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="metaValorAtual">Valor Atual (R$)</label>
+                                <input type="number" id="metaValorAtual" step="0.01" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="metaData">Data Alvo</label>
+                                <input type="month" id="metaData" required>
+                            </div>
+                            
+                            <button type="submit" class="btn btn-primary">Adicionar Meta</button>
+                        </form>
+                    </div>
+                </div>
+                
+                <!-- Summary Cards -->
+                <div class="dashboard-grid">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Saldo Total</h3>
+                            <span>💰</span>
+                        </div>
+                        <div class="card-amount" id="saldoTotal">R$ 0,00</div>
+                        <div class="card-footer">
+                            <div class="percentage-up" id="saldoPercentual">0%</div>
+                            <span>desde o mês passado</span>
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Receitas</h3>
+                            <span>📈</span>
+                        </div>
+                        <div class="card-amount" id="receitasTotal">R$ 0,00</div>
+                        <div class="card-footer">
+                            <div class="percentage-up" id="receitasPercentual">0%</div>
+                            <span>desde o mês passado</span>
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Despesas</h3>
+                            <span>📉</span>
+                        </div>
+                        <div class="card-amount" id="despesasTotal">R$ 0,00</div>
+                        <div class="card-footer">
+                            <div class="percentage-down" id="despesasPercentual">0%</div>
+                            <span>desde o mês passado</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Charts -->
+                <div class="charts-row">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Evolução Financeira</h3>
+                        </div>
+                        <div class="chart-placeholder" id="chart-evolucao">
+                            Adicione transações para visualizar o gráfico
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Distribuição de Gastos</h3>
+                        </div>
+                        <div class="chart-placeholder" id="chart-pizza">
+                            Adicione despesas para visualizar o gráfico
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Budget Progress -->
+                <div class="dashboard-grid">
+                    <div class="card categoria-card" data-categoria="alimentacao">
+                        <div class="card-header">
+                            <h3 class="card-title">Alimentação</h3>
+                            <button class="btn-icon editar-categoria">⚙️</button>
+                        </div>
+                        <div class="card-amount">R$ 0,00 <span class="goal-total">/ R$ 0,00</span></div>
+                        <div class="budget-progress">
+                            <div class="progress-bar good" style="width: 0%;"></div>
+                        </div>
+                        <div class="budget-labels">
+                            <span>0% utilizado</span>
+                            <span>R$ 0,00 restantes</span>
+                        </div>
+                    </div>
+                    
+                    <div class="card categoria-card" data-categoria="transporte">
+                        <div class="card-header">
+                            <h3 class="card-title">Transporte</h3>
+                            <button class="btn-icon editar-categoria">⚙️</button>
+                        </div>
+                        <div class="card-amount">R$ 0,00 <span class="goal-total">/ R$ 0,00</span></div>
+                        <div class="budget-progress">
+                            <div class="progress-bar good" style="width: 0%;"></div>
+                        </div>
+                        <div class="budget-labels">
+                            <span>0% utilizado</span>
+                            <span>R$ 0,00 restantes</span>
+                        </div>
+                    </div>
+                    
+                    <div class="card categoria-card" data-categoria="lazer">
+                        <div class="card-header">
+                            <h3 class="card-title">Lazer</h3>
+                            <button class="btn-icon editar-categoria">⚙️</button>
+                        </div>
+                        <div class="card-amount">R$ 0,00 <span class="goal-total">/ R$ 0,00</span></div>
+                        <div class="budget-progress">
+                            <div class="progress-bar good" style="width: 0%;"></div>
+                        </div>
+                        <div class="budget-labels">
+                            <span>0% utilizado</span>
+                            <span>R$ 0,00 restantes</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Recent Transactions -->
+                <div class="card transactions">
+                    <div class="transactions-header">
+                        <h3 class="transactions-title">Transações Recentes</h3>
+                        <a href="#" class="view-all" id="verTodasTransacoes">Ver todas</a>
+                    </div>
+                    
+                    <table class="transactions-table">
+                        <thead>
+                            <tr>
+                                <th>Descrição</th>
+                                <th>Categoria</th>
+                                <th>Data</th>
+                                <th>Valor</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="transacoesTabela">
+                            <tr class="sem-dados">
+                                <td colspan="5" class="text-center">Nenhuma transação registrada. Clique em '+ Nova Transação' para começar.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <!-- Financial Goals -->
+                <div class="card">
+                    <div class="transactions-header">
+                        <h3 class="transactions-title">Metas Financeiras</h3>
+                        <a href="#" class="view-all" id="novaMeta">+ Nova Meta</a>
+                    </div>
+                    
+                    <div class="goals-grid" id="metasContainer">
+                        <div class="placeholder-message">
+                            Nenhuma meta financeira registrada. Clique em '+ Nova Meta' para começar a planejar seus objetivos.
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+        
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script src="script.js"></script>
+    </body>
+</html>
